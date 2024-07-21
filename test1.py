@@ -7,6 +7,7 @@ from PIL import Image
 from datetime import datetime
 from dateutil.parser import parse as date_parse
 from langchain_groq import ChatGroq
+from langchain.schema import HumanMessage
 
 # Initialize Google Cloud Vision client
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = st.secrets["GOOGLE_APPLICATION_CREDENTIALS"]
@@ -68,15 +69,19 @@ def extract_info_llm(extracted_text):
     
     Format the output as a JSON object with keys: "incident_title", "todays_date", "officer_taking_info", 
     "incident_number", "sar_mission_number", "source_name", "source_phone", "source_relationship", 
-    "lost_person_name", "lost_person_sex", "lost_person_dob".
+    "lost_person_name", "lost_person_sex", "lost_person_dob". Just give me the JSON object and do not include sentences like Here is the extracted information in the desired JSON format:
     """
 
-    response = llama_model.generate(prompt=prompt, max_tokens=300, stop=None)
-    extracted_info = response.choices[0].text.strip()
+
+    response = llama_model.generate(messages=[[HumanMessage(prompt)]], max_tokens=300, stop=None)
+    # response = llama_model.generate(prompt)
+    extracted_info = response.generations[0][0].message.content
     print("this is the output:", extracted_info)
+
     
     try:
         info_dict = json.loads(extracted_info)
+        print("here", info_dict)
         return info_dict
     except json.JSONDecodeError:
         st.error("Failed to parse the extracted information.")
