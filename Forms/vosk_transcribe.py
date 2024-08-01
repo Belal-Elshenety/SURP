@@ -38,7 +38,7 @@ import json
 from vosk import Model, KaldiRecognizer
 
 # Specify the path to the Vosk model
-model_path = "/Users/belalelshenety/SURP/Forms/vosk-model-en-us-daanzu-20200905"
+model_path = "/Users/belalelshenety/SURP/Forms/model"
 
 # Ensure the model directory exists
 if not os.path.exists(model_path):
